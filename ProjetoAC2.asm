@@ -88,7 +88,7 @@ MenuStock:
     String "1- Confirmar    "
     String "4- Voltar       "
     String "----------------"
-Place 2120H
+Place 2500H
 MenuErro:
     String "     Atencao    "
     String "      Opcao     "   
@@ -104,7 +104,16 @@ PasseErrada:
     String "Tentar Novamente"
     String "----------------"
     String "   OK - VOLTAR  "
-    
+Place 2400H
+    MoedasCompra:
+    String "-Inserir Moedas-"
+    String " 1- 5.00  euros "
+    String " 2- 2.00  euros "
+    String " 3- 1.00  euros "
+    String " 4- 0.50  euros "
+    String " 5- 0.20  euros "
+    String " 6- 0.10  euros "
+
 
 Place 0000H
 Inicio:
@@ -136,8 +145,8 @@ ler_opcao:
     CALL RotinaErro
     JMP ligado
 
-Ostock:
-    JMP ligado
+
+    
 ;--------------------
 ;Menu Produtos
 ;--------------------
@@ -159,6 +168,24 @@ OProdutosCiclo:
     CALL RotinaErro
     JMP ligado
 
+;--------------------
+;Menu Stock
+;--------------------
+Ostock:
+    MOV R2,MenuStock
+    CALL MostraDisplay
+    CALL LimpaPerif
+    MOV R0,Nr_Menu
+OStockCiclo:
+    MOVB R1,[R0]
+    CMP R1,0
+    JEQ OStockCiclo
+    CMP R1,Confirmar
+    JEQ ligado
+    CMP R1,Voltar
+    JEQ ligado
+    CALL RotinaErro
+    JMP ligado
 ;--------------------
 ;Menu Bebidas
 ;--------------------
