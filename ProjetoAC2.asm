@@ -18,6 +18,11 @@ FinalPasseIn EQU 01D7H ;Endereco Fim passe
 Display EQU 200H
 DISPLAY_END  EQU 26FH
 CaracterVazio EQU 20H
+;Endereços de memória para guardar a compra
+Compra EQU 1000H
+PasseInserida EQU 0250H
+ValorPagar EQU 0246H
+ValorInserido EQU 0236H
 
 ;Escolhas de Menu (Opcoes)
 Produtos EQU 1 ;Ocao Produtos
@@ -64,19 +69,19 @@ Place 2280H
 MenuBebidadas:
     String "-- Bebidas --   "
     String "----------------"
-    String "1- Coca-cola    "
-    String "2- Brisa marac  "
-    String "3- Fanta laranja"
-    String "4- Agua         "
+    String "1-Coca-cola 1EUR"
+    String "2-Brisa mar 1EUR"
+    String "3-Fanta lar 1EUR"
+    String "4-Agua      1EUR"
     String "----------------"
 Place 2300H
 MenuSnacks:
     String "-- Snacks --    "
     String "----------------"
-    String "1- Doritos      "
-    String "2- Amendoim     "
-    String "3- Pistacio     "
-    String "4- Cajus        " 
+    String "1-Doritos  2 EUR"
+    String "2-Amendoim 1 EUR"
+    String "3-Pistacio 2 EUR"
+    String "4- Cajus   3 EUR" 
     String "----------------"
 
 Place 2100H          ;Display do menu Stock
