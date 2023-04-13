@@ -131,9 +131,9 @@ Principio:
     CALL LimpaPerif
     MOV R0,ON_OFF
 Liga:
-    MOV R1,[R0]
+    MOVB R1,[R0]
     CMP R1,1
-    JNE ligado
+    JNE Liga
 ligado:
     MOV R2,MenuInicio
     CALL MostraDisplay
