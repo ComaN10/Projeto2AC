@@ -2,6 +2,7 @@
 ON_OFF  EQU 1A0H ;BOTAO ON/OFF
 Nr_Menu EQU 1B0H ;Numero de escolha menu
 OK      EQU 1C0H ;Escolha OK
+
 InicioPasseIn EQU 01D0H ;Endereco inic-o passe
 FinalPasseIn EQU 01D7H ;Endereco Fim passe
 
@@ -39,7 +40,12 @@ Amendoim EQU 2;Opcao Amendoim
 Pistacio EQU 3;Opcao pistacio
 Cajus EQU 4;Opcao cajus
 Voltar   EQU 4 ;Opcao Voltar
-
+CincoEur EQU 1 ;Opcao 5 euros
+DoisEur EQU 2 ;Opçao 2 euros
+UmEur EQU 3 ;Opçao 1 euros
+cinqCents EQU 4 ;Opçao 50 cents
+vinteCents EQU 5 ;Opçao 20 cents
+dezCents EQU 6 ;Opçao 10 cents
 
 
 
@@ -68,20 +74,20 @@ MenuCategoria:
 Place 2280H
 MenuBebidadas:
     String "-- Bebidas --   "
-    String "----------------"
     String "1-Coca-cola 1EUR"
     String "2-Brisa mar 1EUR"
     String "3-Fanta lar 1EUR"
     String "4-Agua      1EUR"
+    String "7- Cancelar     "
     String "----------------"
 Place 2300H
 MenuSnacks:
-    String "-- Snacks --    "
-    String "----------------"
+    String "  -- Snacks --  "
     String "1-Doritos  2 EUR"
     String "2-Amendoim 1 EUR"
     String "3-Pistacio 2 EUR"
     String "4- Cajus   3 EUR" 
+    String "7- Cancelar     "
     String "----------------"
 
 Place 2100H          ;Display do menu Stock
@@ -92,6 +98,33 @@ MenuStock:
     String "Password        "
     String "1- Confirmar    "
     String "4- Voltar       "
+    String "----------------"
+Place 2380H
+MStock1:
+    String "---- Stock ---- "
+    String "Doritos         "
+    String "Amendoim        "
+    String "Pistacio        "
+    String "Cajus           "
+    String "Coca cola       "
+    String "1- Seguinte 1/3 " 
+Place 2600H
+Mstock2:
+    String "---- Stock ---- "
+    String "Brisa Mar       "
+    String "Fanta lar       "
+    String "Agua            "
+    String "Cinco Eur       "
+    String "Dois Eur        "
+    String "1 -Seguinte 2/3 "
+Place 2680H
+    Mstock3:
+    String "---- Stock ---- "
+    String "Um Eur          "
+    String "0.50 Eur        "
+    String "0.20 Eur        "
+    String "0.10 Eur        "
+    String "1- Seguinte 3/3 "
     String "----------------"
 Place 2500H
 MenuErro:
@@ -186,10 +219,57 @@ OStockCiclo:
     CMP R1,0
     JEQ OStockCiclo
     CMP R1,Confirmar
-    JEQ ligado
+    JEQ OMostraStock1
     CMP R1,Voltar
     JEQ ligado
     CALL RotinaErro
+    JMP ligado
+;--------------------
+;Opcao Mostra Stock
+;--------------------
+OMostraStock1:
+    MOV R2,MStock1
+    CALL MostraDisplay
+    CALL LimpaPerif
+    MOV R0,Nr_Menu
+OMostraCiclo1:
+    MOVB R1,[R0]
+    CMP R1,0
+    JEQ OMostraCiclo1
+    CMP R1,1
+    JEQ OMostraStock2
+    CALL RotinaErro
+    JMP ligado
+OMostraStock2:
+    MOV R2,Mstock2
+    CALL MostraDisplay
+    CALL LimpaPerif
+    MOV R0,Nr_Menu
+OMostraCiclo2:
+    MOVB R1,[R0]
+    CMP R1,0
+    JEQ OMostraCiclo2
+    CMP R1,1
+    JEQ OMostraStock3
+    CALL RotinaErro
+    JMP ligado
+OMostraStock3:
+    MOV R2,Mstock3
+    CALL MostraDisplay
+    CALL LimpaPerif
+    MOV R0,Nr_Menu
+OMostraCiclo3:
+    MOVB R1,[R0]
+    CMP R1,0
+    JEQ OMostraCiclo3
+    CMP R1,1
+    JEQ OMostraStock1
+    CALL RotinaErro
+    JMP ligado
+;--------------------
+;Jump absoluto
+;--------------------
+ jumpLigado:
     JMP ligado
 ;--------------------
 ;Menu Bebidas
@@ -198,29 +278,31 @@ OBebidas:
     MOV R2,MenuBebidadas
     CALL MostraDisplay
     CALL LimpaPerif
+    MOV R0,Nr_Menu
 OBebidasCiclo:
     MOVB R1,[R0]
     CMP R1,0
     JEQ OBebidasCiclo
     CMP R1,COCA
-    JEQ ligado
+    JEQ Omoedas
     CMP R1,Brisa
-    JEQ ligado
+    JEQ Omoedas
     CMP R1,Fanta
-    JEQ ligado
+    JEQ Omoedas
     CMP R1,Agua
+    JEQ Omoedas
+    CMP R1,7
+    JEQ ligado
     CALL RotinaErro
     JMP OBebidas
-
 ;--------------------
 ;Menu Snacks
 ;--------------------  
-
-
 OSnacks:
     MOV R2,MenuSnacks
     CALL MostraDisplay
     CALL LimpaPerif
+    MOV R0,Nr_Menu
 OSnacksCiclo:
     MOVB R1,[R0]
     CMP R1,0
@@ -233,8 +315,30 @@ OSnacksCiclo:
     JEQ ligado
     CMP R1,Cajus
     CALL RotinaErro
-    JMP OBebidas
-
+    JMP OSnacks
+;--------------------
+;Menu Moedas
+;--------------------  
+Omoedas:
+    MOV R2,MoedasCompra
+    CALL MostraDisplay
+    CALL LimpaPerif
+    MOV R0,Nr_Menu
+OmoedasCiclo:
+    MOVB R1,[R0]
+    CMP R1,0
+    JEQ OmoedasCiclo
+    CMP R1,CincoEur
+    MOV R3,5
+    JEQ jumpLigado
+    CMP R1,DoisEur
+    MOV R3,2
+    JEQ jumpLigado
+    CMP R1,UmEur
+    MOV R3,1
+    JEQ jumpLigado
+    CALL RotinaErro
+    JMP Omoedas
 ;--------------------
 ;Rotina Erro
 ;--------------------  
