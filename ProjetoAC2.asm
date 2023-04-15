@@ -14,7 +14,6 @@ FinalPasseIn EQU 01D7H ;Endereco Fim passe
 ;String "Sel_Num_Menu"  ;Mostra Botao de selecao do Menu
 
 
-
 ;DISPLAY
 Display EQU 200H
 DISPLAY_END  EQU 26FH
@@ -24,7 +23,10 @@ Compra EQU 1000H
 PasseInserida EQU 0230H
 ValorPagar EQU 0346H
 ValorInserido EQU 0356H
-
+;Palavra Passe
+Place 0030H
+Passe:
+    String "Tr0l@da" 
 ;Escolhas de Menu (Opcoes)
 Produtos EQU 1 ;Ocao Produtos
 Stock    EQU 2 ;Opcao Stock
@@ -360,10 +362,48 @@ CicloOK:
     MOVB R1,[R0]
     CMP R1,0
     JEQ CicloOK
+    CALL VerificaPasse
     JMP EscreveDispPasse
     RET
-
-
+;--------------------
+;Varifica Passe
+;-------------------- 
+VerificaPasse:
+    MOV R0,InicioPasseIn
+    MOV R1,FinalPasseIn
+    MOV R2,Passe
+    ADD R2,R3
+    MOV R4,8 ;Registo auxiliar com o tamanho da Palavra Passe
+CompararPasse:
+    MOV R5,[R0]
+    MOV R6,[R2]
+    CMP R6,R5
+    JEQ PasseIgual
+CicloPasseErrada:
+    MOV R2,PasseErrada
+    CALL MostraDisplay
+    MOV R0,OK
+    MOVB R1,[R0]
+    CMP R1,0
+    JEQ CicloPasseErrada
+    CALL LimpaPerif
+    JMP CicloFinal
+PasseIgual:
+    ADD R0,1
+    ADD R2,1
+    CMP R0,R1
+    JLE PasseIgual
+    JMP OMostraStock1
+CicloFinal:
+    POP R7
+    POP R6
+    POP R5
+    POP R4
+    POP R3
+    POP R2
+    POP R1
+    POP R0
+    RET
 ;--------------------
 ;Rotina Erro
 ;--------------------  
