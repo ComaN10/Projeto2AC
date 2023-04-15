@@ -21,9 +21,9 @@ DISPLAY_END  EQU 26FH
 CaracterVazio EQU 20H
 ;Endereços de memória para guardar a compra
 Compra EQU 1000H
-PasseInserida EQU 0250H
-ValorPagar EQU 0246H
-ValorInserido EQU 0236H
+PasseInserida EQU 0230H
+ValorPagar EQU 0346H
+ValorInserido EQU 0356H
 
 ;Escolhas de Menu (Opcoes)
 Produtos EQU 1 ;Ocao Produtos
@@ -93,9 +93,9 @@ MenuSnacks:
 Place 2100H          ;Display do menu Stock
 MenuStock:
     String "---- STOCK ---- "
-    String "----------------"
-    String "Introduza       "
-    String "Password        "
+    String "   Introduza    "
+    String "   Password     "
+    String "                "
     String "1- Confirmar    "
     String "4- Voltar       "
     String "----------------"
@@ -215,6 +215,7 @@ Ostock:
     CALL LimpaPerif
     MOV R0,Nr_Menu
 OStockCiclo:
+    CALL EscreveDisp
     MOVB R1,[R0]
     CMP R1,0
     JEQ OStockCiclo
@@ -339,6 +340,30 @@ OmoedasCiclo:
     JEQ jumpLigado
     CALL RotinaErro
     JMP Omoedas
+;--------------------
+;Escreve passe Display
+;-------------------- 
+EscreveDisp:
+    MOV R2,PasseInserida
+    MOV R4,InicioPasseIn
+EscreveDispPasse:
+    MOVB R3,[R4]
+    CMP R3,0
+    JEQ CicloOK
+    MOV R3,2AH
+    MOVB [R2],R3
+    ADD R2,1
+    ADD R4,1
+    JMP EscreveDispPasse
+CicloOK:
+    MOV R0,OK
+    MOVB R1,[R0]
+    CMP R1,0
+    JEQ CicloOK
+    JMP EscreveDispPasse
+    RET
+
+
 ;--------------------
 ;Rotina Erro
 ;--------------------  
