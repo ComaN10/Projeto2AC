@@ -362,8 +362,13 @@ CicloOK:
     MOVB R1,[R0]
     CMP R1,0
     JEQ CicloOK
+    MOV R5,Nr_Menu
+    MOVB R6,[R5]
+    CMP R6,0
+    JEQ EscreveDispPasse
     CALL VerificaPasse
     JMP EscreveDispPasse
+    CALL RotinaErro
     RET
 ;--------------------
 ;Varifica Passe
@@ -372,8 +377,7 @@ VerificaPasse:
     MOV R0,InicioPasseIn
     MOV R1,FinalPasseIn
     MOV R2,Passe
-    ADD R2,R3
-    MOV R4,8 ;Registo auxiliar com o tamanho da Palavra Passe
+    MOV R4,8    ;Registo auxiliar com o tamanho da Palavra Passe
 CompararPasse:
     MOV R5,[R0]
     MOV R6,[R2]
@@ -389,10 +393,10 @@ CicloPasseErrada:
     CALL LimpaPerif
     JMP CicloFinal
 PasseIgual:
-    ADD R0,1
-    ADD R2,1
+    ADD R0,2
+    ADD R2,2
     CMP R0,R1
-    JLE PasseIgual
+    JLE CompararPasse
     JMP OMostraStock1
 CicloFinal:
     POP R7
