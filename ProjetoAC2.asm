@@ -386,11 +386,10 @@ CompararPasse:
 CicloPasseErrada:
     MOV R2,PasseErrada
     CALL MostraDisplay
-    MOV R0,OK
+    MOV R0,Nr_Menu
     MOVB R1,[R0]
     CMP R1,0
     JEQ CicloPasseErrada
-    CALL LimpaPerif
     JMP CicloFinal
 PasseIgual:
     ADD R0,2
