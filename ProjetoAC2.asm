@@ -161,41 +161,41 @@ Inicio:
     JMP R0
 Place 3000H
 Principio:
-    MOV SP,StackPointer
-    CALL LimpaDisplay
-    CALL LimpaPerif
-    MOV R0,ON_OFF
-Liga:
-    MOVB R1,[R0]
+    MOV SP,StackPointer  ; Apontador para a Pilha
+    CALL LimpaDisplay    ; chamada para o display ser limpo 
+    CALL LimpaPerif      ; chamada para os periféricos serem limpos
+    MOV R0,ON_OFF        
+Liga:                    ; ligação da Maquina   
+    MOVB R1,[R0]         ; passa o bit no endereço 
     CMP R1,1
     JNE Liga
-ligado:
-    MOV R2,MenuInicio
+ligado:                 ; mostra o menu inicial 
+    MOV R2,MenuInicio 
     CALL MostraDisplay
     CALL LimpaPerif
-ler_opcao:
+ler_opcao:              ; Lê a opção dada pelo utilizador 
     MOV R0,Nr_Menu
     MOVB R1,[R0]
     CMP R1,0
-    JEQ ler_opcao
-    CMP R1,Produtos
-    JEQ Oprodutos
-    CMP R1,Stock
-    JEQ Ostock
-    CALL RotinaErro
-    JMP ligado
+    JEQ ler_opcao       ; Caso o valor nao tenha sido inserido pelo utilizador, o programa vai ficar sempre a executar as mesmas instruçoes
+    CMP R1,Produtos     ; Compara o valor inserido com o valor guardado na Variável Produtos
+    JEQ Oprodutos       ; Caso seja igual salta para o Menu Produtos (etiqueta = OProdutos)
+    CMP R1,Stock        ; Compara o valor inserido com o valor guardado na Variável Stock 
+    JEQ Ostock          ; Caso seja igual salta para o Menu Produtos (etiqueta = OStock)
+    CALL RotinaErro     ; Caso nao seja nenhuma das opçoes vai para a rotina de erro
+    JMP ligado          ;Salta para a rotina ligado 
 
 
     
 ;--------------------
 ;Menu Produtos
 ;--------------------
-Oprodutos:
-    MOV R2,MenuCategoria
+Oprodutos:                  
+    MOV R2,MenuCategoria 
     CALL MostraDisplay
     CALL LimpaPerif
     MOV R0,Nr_Menu
-OProdutosCiclo:
+OProdutosCiclo:             
     MOVB R1,[R0]
     CMP R1,0
     JEQ OProdutosCiclo
@@ -272,7 +272,7 @@ OMostraCiclo3:
 ;--------------------
 ;Jump absoluto
 ;--------------------
- jumpLigado:
+ jumpLigado:  ;visto que a instruçao JEQ tem um limite de 255 instruçoes foi criada uma etiqueta com um JMP
     JMP ligado
 ;--------------------
 ;Menu Bebidas
@@ -338,7 +338,7 @@ OmoedasCiclo:
     MOV R3,2
     JEQ jumpLigado
     CMP R1,UmEur
-    MOV R3,1
+    MOV R3,1  
     JEQ jumpLigado
     CALL RotinaErro
     JMP Omoedas
@@ -384,6 +384,7 @@ CompararPasse:
     CMP R6,R5
     JEQ PasseIgual
 CicloPasseErrada:
+    Call LimpaPerif
     MOV R2,PasseErrada
     CALL MostraDisplay
     MOV R0,Nr_Menu
@@ -472,13 +473,13 @@ LimpaPerif:
 ;--------------------
 ;LIMPA DISPLAY
 ;--------------------
-LimpaDisplay:
+LimpaDisplay:        ;Faz a Limpeza do diplay
     PUSH R0
     PUSH R1
     PUSH R3
     MOV R0,Display
     MOV R1,DISPLAY_END
-CicloLimpar:
+CicloLimpar:         ;Ciclo para a limpeza caracter a caracter
     MOV R2,CaracterVazio
     MOVB [R0],R2
     ADD R0,1
