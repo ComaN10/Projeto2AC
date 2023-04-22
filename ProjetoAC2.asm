@@ -191,21 +191,21 @@ ler_opcao:              ; Lê a opção dada pelo utilizador
 ;Menu Produtos
 ;--------------------
 Oprodutos:                  
-    MOV R2,MenuCategoria 
-    CALL MostraDisplay
-    CALL LimpaPerif
-    MOV R0,Nr_Menu
+    MOV R2,MenuCategoria;Coloca em r2 o endereco de memoria do display
+    CALL MostraDisplay  ;Chamada para Mostrar o display em R2
+    CALL LimpaPerif     ;Chammada para a limpeza dos Periféricos
+    MOV R0,Nr_Menu      ;coloca em R0 o valor selecionado
 OProdutosCiclo:             
-    MOVB R1,[R0]
-    CMP R1,0
-    JEQ OProdutosCiclo
-    CMP R1,Bebidas
-    JEQ OBebidas
-    CMP R1,Snacks
-    JEQ OSnacks
-    CMP R1,7
-    JEQ ligado
-    CALL RotinaErro
+    MOVB R1,[R0]        ;chamada para a do menuno display
+    CMP R1,0            ;compara r1 com 0
+    JEQ OProdutosCiclo  ;volta a repetir o processo se for igual 
+    CMP R1,Bebidas      ;compara o valor de R1 com o valor da variavel bebidas
+    JEQ OBebidas        ;Caso seja igual sal para a OBebidas
+    CMP R1,Snacks       ;compara o valor de R1 com o valor da variavel Snacks
+    JEQ OSnacks         ;Caso seja igual salta para a OSnacks
+    CMP R1,7            ;compara o valor de R1 com o valor 7 que e o valor para sair do menu
+    JEQ ligado          
+    CALL RotinaErro     ;chamada para a rotina de ERRO
     JMP ligado
 
 ;--------------------
@@ -213,61 +213,61 @@ OProdutosCiclo:
 ;--------------------
 Ostock:
     MOV R2,MenuStock
-    CALL MostraDisplay
-    CALL LimpaPerif
-    MOV R0,Nr_Menu
+    CALL MostraDisplay  ;Chamada para Mostrar o display em R2
+    CALL LimpaPerif     ;Chammada para a limpeza dos Periféricos
+    MOV R0,Nr_Menu      ;coloca em R0 o valor selecionado
 OStockCiclo:
-    CALL EscreveDisp
-    MOVB R1,[R0]
-    CMP R1,0
-    JEQ OStockCiclo
-    CMP R1,Confirmar
-    JEQ OMostraStock1
-    CMP R1,Voltar
-    JEQ ligado
-    CALL RotinaErro
+    CALL EscreveDisp    ;chamada para a do menuno display
+    MOVB R1,[R0]        ;Passa o byte da selecao em R1
+    CMP R1,0            ;compara r1 com 0
+    JEQ OStockCiclo     ;volta a repetir o processo se for igual 
+    CMP R1,Confirmar    ;compara o valor de R1 com o valor da variavel confirmar
+    JEQ OMostraStock1   ;Caso seja igual sal para a OMostraStock1
+    CMP R1,Voltar       ;compara o valor de R1 com o valor da variavel voltar
+    JEQ ligado          
+    CALL RotinaErro     ;chamada para a rotina de ERRO
     JMP ligado
 ;--------------------
 ;Opcao Mostra Stock
 ;--------------------
 OMostraStock1:
-    MOV R2,MStock1
-    CALL MostraDisplay
-    CALL LimpaPerif
-    MOV R0,Nr_Menu
+    MOV R2,MStock1     ;Coloca em r2 o endereco de memoria do display
+    CALL MostraDisplay ;Chamada para Mostrar o display em R2
+    CALL LimpaPerif    ;Chammada para a limpeza dos Periféricos
+    MOV R0,Nr_Menu     ;coloca em R0 o valor selecionado
 OMostraCiclo1:
-    MOVB R1,[R0]
-    CMP R1,0
+    MOVB R1,[R0]       ;Passa o byte da selecao em R1
+    CMP R1,0           ;compara R1 com 0
     JEQ OMostraCiclo1
-    CMP R1,1
-    JEQ OMostraStock2
-    CALL RotinaErro
+    CMP R1,1           ;compara R1 com 1
+    JEQ OMostraStock2  ;Caso seja igual sal para a OMostraStock2
+    CALL RotinaErro    ;chamada para a rotina de ERRO
     JMP ligado
 OMostraStock2:
-    MOV R2,Mstock2
-    CALL MostraDisplay
-    CALL LimpaPerif
-    MOV R0,Nr_Menu
+    MOV R2,Mstock2     ;Coloca em r2 o endereco de memoria do display  
+    CALL MostraDisplay ;Chamada para Mostrar o display em R2
+    CALL LimpaPerif    ;Chammada para a limpeza dos Periféricos
+    MOV R0,Nr_Menu     ;coloca em R0 o valor selecionado
 OMostraCiclo2:
-    MOVB R1,[R0]
-    CMP R1,0
+    MOVB R1,[R0]       ;Passa o byte da selecao em R1
+    CMP R1,0           ;compara R1 com 0
     JEQ OMostraCiclo2
-    CMP R1,1
-    JEQ OMostraStock3
-    CALL RotinaErro
+    CMP R1,1           ;compara R1 com 1
+    JEQ OMostraStock3  ;Caso seja igual sal para a OMostraStock2
+    CALL RotinaErro    ;chamada para a rotina de ERRO
     JMP ligado
 OMostraStock3:
-    MOV R2,Mstock3
-    CALL MostraDisplay
-    CALL LimpaPerif
-    MOV R0,Nr_Menu
+    MOV R2,Mstock3     ;Coloca em r2 o endereco de memoria do display
+    CALL MostraDisplay ;Chamada para Mostrar o display em R2
+    CALL LimpaPerif    ;Chammada para a limpeza dos Periféricos
+    MOV R0,Nr_Menu     ;coloca em R0 o valor selecionado
 OMostraCiclo3:
-    MOVB R1,[R0]
-    CMP R1,0
+    MOVB R1,[R0]       ;Passa o byte da selecao em R1
+    CMP R1,0           ;compara R1 com 0
     JEQ OMostraCiclo3
-    CMP R1,1
-    JEQ OMostraStock1
-    CALL RotinaErro
+    CMP R1,1           ;compara R1 com 1
+    JEQ OMostraStock1  ;Caso seja igual sal para a OMostraStock3
+    CALL RotinaErro    ;chamada para a rotina de ERRO
     JMP ligado
 ;--------------------
 ;Jump absoluto
