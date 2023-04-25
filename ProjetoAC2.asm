@@ -197,7 +197,7 @@ Place 2400H
     String " 5- 0.20  euros "
     String " 6- 0.10  euros "
 
-Place 2500H
+Place 2510H
     Talao:
     String "-----TALAO------"
     String "----------------"
@@ -205,7 +205,7 @@ Place 2500H
     String "Inserido   .00--"
     String "Troco      . 0--"
     String "----------------"
-    String "   7 - VOLTAR  "
+    String "   7 - VOLTAR   "
 
 Place 0000H
 Inicio:
@@ -218,7 +218,7 @@ Principio:
     CALL LimpaPerif      ; chamada para os periféricos serem limpos
     MOV R0,ON_OFF        
 Liga:                    ; ligação da Maquina   
-    MOVB R1,[R0]         ; passa o bit no endereço 
+    MOVB R1,[R0]         ; passa o byte no endereço 
     CMP R1,1
     JNE Liga
 ligado:                 ; mostra o menu inicial 
@@ -338,7 +338,7 @@ OBebidas:
     MOV R4,1             ; coloca em R4 o valor 1
     MOV R5, ReduzStock   ; guarda a posicao de ReduzStock em R5
 OBebidasCiclo:
-    MOVB R1,[R0]         ; Move um bit de R0 para R1 
+    MOVB R1,[R0]         ; Move um byte de R0 para R1 
     CMP R1,0             ; faz a comparacao de r1 com 0
     JEQ OBebidasCiclo    ; caso seja igual volta ao inicio do ciclo
     ADD R3,R4            ; Adiciona r3 com R4
@@ -364,15 +364,16 @@ OBebidasCiclo:
 ;--------------------
 ;Menu Snacks
 ;--------------------  
+;ciclo de opcao snacks equivalente ao das bebidas
 OSnacks:
     MOV R2,MenuSnacks
     CALL MostraDisplay
     CALL LimpaPerif
     MOV R0,Nr_Menu
-    MOV R3,53
+    MOV R3,53            ; guarda no R3 o valor 53 que equivale a 5 em ASCII
     MOV R4,1
     MOV R5, ReduzStock
-OSnacksCiclo:
+OSnacksCiclo:            ; Elaborado da mesma maneira que a rotina OBebidasCiclo
     MOVB R1,[R0]
     CMP R1,0
     JEQ OSnacksCiclo
@@ -399,36 +400,35 @@ OSnacksCiclo:
 ;Menu Moedas
 ;--------------------  
 Omoedas:
-    CALL CicloEscolhaProduto
-    MOV R2,MoedasCompra
-    CALL MostraDisplay
-    CALL LimpaPerif
-    MOV R0,Nr_Menu
+    CALL CicloEscolhaProduto    ; chamada para a rotina CicloProdutoEscolhido
+    MOV R2,MoedasCompra         ; guarda em R2 o endereço de MoedasCompra
+    CALL MostraDisplay          ; chamada para mostrar display 
+    CALL LimpaPerif             ; chamada para a funçao limpa periféricos
+    MOV R0,Nr_Menu              ; guarda o valor inserido pelo utilizador em R0
 OmoedasCiclo:
-    MOVB R1,[R0]
-    CMP R1,0
-    JEQ OmoedasCiclo
-    CMP R1,CincoEur
-    MOV R3,ECinco
-    JEQ jumpAbsTalao
-    CMP R1,DoisEur
-    MOV R3,EDois
-    JEQ jumpAbsTalao
-    CMP R1,UmEur
-    MOV R3,EUm  
-    JEQ jumpAbsTalao
-    CMP R1,cinqCents
-    MOV R3,CCinquenta  
-    JEQ jumpAbsTalao
-    CMP R1,vinteCents
-    MOV R3,CVinte  
-    JEQ jumpAbsTalao
-    CMP R1,dezCents
-    MOV R3,CDez  
-    JEQ jumpAbsTalao
-    CALL RotinaErro
-    JMP Omoedas
-
+    MOVB R1,[R0]                ; move para R1 o byte de R0 
+    CMP R1,0                    ; compara o que esta guardado em R1 com 0
+    JEQ OmoedasCiclo            ; caso seja igual volta ao OmoedasCiclo
+    CMP R1,CincoEur             ; compara R1 com o valor guardado na Variável CincoEur
+    MOV R3,ECinco               ; guarda em R3 o valor de ECinco 
+    JEQ jumpAbsTalao            ; caso seja igual salta para um jump absolutotalao que depois salta para a rotina do talao 
+    CMP R1,DoisEur              ; compara R1 com o valor guardado na Variável DoisEur
+    MOV R3,EDois                ; guarda em R3 o valor de EDois 
+    JEQ jumpAbsTalao            ; caso seja igual salta para um jump absolutotalao que depois salta para a rotina do talao 
+    CMP R1,UmEur                ; compara R1 com o valor guardado na Variável UmEur
+    MOV R3,EUm                  ; guarda em R3 o valor de EUm 
+    JEQ jumpAbsTalao            ; caso seja igual salta para um jump absolutotalao que depois salta para a rotina do talao 
+    CMP R1,cinqCents            ; compara R1 com o valor guardado na Variável cinqCents
+    MOV R3,CCinquenta           ; guarda em R3 o valor de CCinquenta
+    JEQ jumpAbsTalao            ; caso seja igual salta para um jump absolutotalao que depois salta para a rotina do talao 
+    CMP R1,vinteCents           ; compara R1 com o valor guardado na Variável vinteCents
+    MOV R3,CVinte               ; guarda em R3 o valor de CVinte
+    JEQ jumpAbsTalao            ; caso seja igual salta para um jump absolutotalao que depois salta para a rotina do talao
+    CMP R1,dezCents             ; compara R1 com o valor guardado na Variável dezCents
+    MOV R3,CDez                 ; guarda em R3 o valor de CDez
+    JEQ jumpAbsTalao            ; caso seja igual salta para um jump absolutotalao que depois salta para a rotina do talao
+    CALL RotinaErro             ; chamada para a rotina de Erro
+    JMP Omoedas                 ; salta para o inicio
 ;--------------------
 ;Menu EscolhaProduto
 ;--------------------
@@ -620,6 +620,11 @@ Diminui:
     MOVB [R1],R6            ;Coloca o novo valor das dezenas
     MOVB [R2],R7            ;Coloca o novo valor das unidades
     RET
+;--------------------
+;Jump absoluto
+;--------------------
+ jumpLigado1:  ;visto que a instruçao JEQ tem um limite de 255 instruçoes foi criada uma etiqueta com um JMP
+    JMP jumpLigado
 ;--------------------
 ;Menu MoedasTroco
 ;--------------------
@@ -824,63 +829,69 @@ OTalao:
     CALL LimpaPerif
 
 ;--------------------
+;Jump absoluto
+;--------------------
+ jumpLigado2:  ;visto que a instruçao JEQ tem um limite de 255 instruçoes foi criada uma etiqueta com um JMP
+    JMP jumpLigado1
+;--------------------
 ;Escreve passe Display
 ;-------------------- 
 EscreveDisp:
-    MOV R2,PasseInserida
-    MOV R4,InicioPasseIn
+    MOV R2,PasseInserida     ; Guarda em R2 o enderço da passeInserida
+    MOV R4,InicioPasseIn     ; Guarda em R4 o endereco do inicia da passe predefinida
 EscreveDispPasse:
-    MOVB R3,[R4]
-    CMP R3,0
-    JEQ CicloOK
-    MOV R3,2AH
-    MOVB [R2],R3
-    ADD R2,1
-    ADD R4,1
-    JMP EscreveDispPasse
-CicloOK:
-    MOV R0,OK
-    MOVB R1,[R0]
-    CMP R1,0
-    JEQ CicloOK
-    MOV R5,Nr_Menu
-    MOVB R6,[R5]
-    CMP R6,0
-    JEQ EscreveDispPasse
-    CALL VerificaPasse
-    JMP EscreveDispPasse
-    CALL RotinaErro
-    RET
-;--------------------
+    MOVB R3,[R4]             ; move para R3 um byte de R4
+    CMP R3,0                 ; compara R3 com 0
+    JEQ CicloOK              ; caso seja igual salta para o CicloOK
+    MOV R3,2AH               ; coloca em R3 o carater * para efeitos de escrita da passe no display
+    MOVB [R2],R3             ; move de R3 o * em coloca na primeria posiçao de R2
+    ADD R2,1                 ; adiciona um a R2
+    ADD R4,1                 ; adiciona um a R4
+    JMP EscreveDispPasse     ; salta para o inicio
+CicloOK:                     
+    MOV R0,OK                ; guarda em R0 o valor de OK
+    MOVB R1,[R0]             ; move para R1 um byte de R0 
+    CMP R1,0                 ; compara R1 com 0 
+    JEQ CicloOK              ; em caso de igualdade salta para o inicio do ciclo 
+    MOV R5,Nr_Menu           ; guarda em R5 o endereço de memoria de NR_menu   
+    MOVB R6,[R5]             ; move um byte de R5 para R6 que será a escolha do utilizador 
+    CMP R6,0                 ; compara o valor em R6 com 0 
+    JEQ EscreveDispPasse     ; caso seja igual salta para o EscreveDispPasse
+    CALL VerificaPasse       ; chamada para a rotina VerificaPasse
+    JMP EscreveDispPasse     ; salta para a rotina EscreveDispPasse
+    CALL RotinaErro          ; em caso de erro executa a chamada para a RotinaErro
+    RET                      ; return
+;--------------------   
 ;Varifica Passe
 ;-------------------- 
 VerificaPasse:
-    MOV R0,InicioPasseIn
-    MOV R1,FinalPasseIn
-    MOV R2,Passe
+    MOV R0,InicioPasseIn  ; coloca em R0 o endereco de memoria do inicio da Passe
+    MOV R1,FinalPasseIn   ; coloca em R1 o endereco de memoria do fim da Passe
+    MOV R2,Passe          ; coloca em R2 o endereco de memoria da Passe predefinida
     MOV R4,8    ;Registo auxiliar com o tamanho da Palavra Passe
 CompararPasse:
-    MOV R5,[R0]
-    MOV R6,[R2]
-    CMP R6,R5
-    JEQ PasseIgual
-CicloPasseErrada:
-    Call LimpaPerif
-    MOV R2,PasseErrada
-    CALL MostraDisplay
-    MOV R0,Nr_Menu
-    MOVB R1,[R0]
-    CMP R1,0
-    JEQ CicloPasseErrada
-    JMP CicloFinal
+    MOV R5,[R0]    ; coloca em R5 o valor presento no endereco guardado em R0
+    MOV R6,[R2]    ; coloca em R6 o valor presento no endereco guardado em R2
+    CMP R6,R5      ; compara os Dois registos
+    JEQ PasseIgual ; caso seja igual salta para a rotina passIgual
+CicloPasseErrada:   
+    Call LimpaPerif ; chamada para a limpeza dos perifericos 
+    MOV R2,PasseErrada  ; guarda em R2 o endereco do diplay 
+    CALL MostraDisplay  ; chamda para mostrar o display
+    MOV R0,Nr_Menu  ; guarda em R0 o endereco de NR_MENU
+    MOVB R1,[R0]    ; passa para R1 o byte presente em R0
+    CMP R1,0        ; compara com 0 
+    JEQ CicloPasseErrada    ; caso seja igual salta para CicloPasseErrada
+    JMP CicloFinal          ; salta para os Pops
 PasseIgual:
-    ADD R0,2
-    ADD R2,2
-    CMP R0,R1
-    JLE CompararPasse
-    JMP OMostraStock1
+    ADD R0,2        ; adiciona a R0 ,2 
+    ADD R2,2        ; adiciona a R2 ,2
+    CMP R0,R1       ; compara R0 com R2
+    JLE CompararPasse   ; se for menor ou igual salta para o ciclo compararPasse
+    JMP OMostraStock1   ; salta para a rotina MostrarStock1
 CicloFinal:
-    POP R7
+; os pops servem para colocar os respetivos registos no topo da pilha
+    POP R7        
     POP R6
     POP R5
     POP R4
@@ -893,17 +904,17 @@ CicloFinal:
 ;Rotina Erro
 ;--------------------  
 RotinaErro:
-    PUSH R0
+    PUSH R0     
     PUSH R1
     PUSH R2
-    MOV R2,MenuErro
-    CALL MostraDisplay
-    CALL LimpaPerif
-    MOV R0,Nr_Menu
+    MOV R2,MenuErro     ; coloca em R2 o enderco onde esta o MenuErro
+    CALL MostraDisplay  ; faz a chamada para mostrar o display
+    CALL LimpaPerif     ; chamada para a limpeza dos perifeircos
+    MOV R0,Nr_Menu      ; guarda em R0 o endereco de NR_MENU
 ERRO:
-    MOVB R1,[R0]
-    CMP R1,7
-    JEQ ligado
+    MOVB R1,[R0]        ; passa para R1 o byte presente em R0
+    CMP R1,7            ; compara o valor de R1 com 7 
+    JEQ jumpLigado2     ; caso seja igual salta para o jumpLigado2
     POP R2
     POP R1
     POP R0
@@ -916,15 +927,15 @@ MostraDisplay:
     PUSH R0
     PUSH R1
     PUSH R3
-    MOV R0, Display
-    MOV R1, DISPLAY_END
+    MOV R0, Display      ; coloca em R0 o endereco de inicio do display
+    MOV R1, DISPLAY_END  ; coloca em R1 o endereco de fim de display
 CicloMostrar:
-    MOV R3,[R2]
-    MOV [R0],R3
-    ADD R2,2
-    ADD R0,2
-    CMP R0,R1
-    JLE CicloMostrar
+    MOV R3,[R2]          ; passa para R3 o conteudo presente em R2
+    MOV [R0],R3          ; passa para conteudo de R0 o que esta em R3
+    ADD R2,2             ; adiciona 2 a R2
+    ADD R0,2             ; adiciona 2 a R0
+    CMP R0,R1            ; verifica se esta no fim do display
+    JLE CicloMostrar     ; caso seja menor ou igual salta para o ciclo mostrar
     POP R3
     POP R1
     POP R0
@@ -939,13 +950,13 @@ LimpaPerif:
     PUSH R1
     PUSH R2
     PUSH R3
-    MOV R0,ON_OFF
-    MOV R1,Nr_Menu
-    MOV R2,OK
-    MOV R3,0
-    MOVB [R0],R3
-    MOVB [R1],R3
-    MOVB [R2],R3
+    MOV R0,ON_OFF      ; guarda em R0 o valor do endereco de ON_OFF
+    MOV R1,Nr_Menu     ; guarda em R1 o valor do endereco de Nr_Menu
+    MOV R2,OK          ; guarda em R2 o valor do endereco de OK
+    MOV R3,0           ; guarda em R3 o valor 0
+    MOVB [R0],R3       ; passa a 0 o que esta em R0 
+    MOVB [R1],R3       ; passa a 0 o que esta em R1
+    MOVB [R2],R3       ; passa a 0 o que esta em R2
     POP R3
     POP R2
     POP R1
@@ -958,14 +969,14 @@ LimpaDisplay:        ;Faz a Limpeza do diplay
     PUSH R0
     PUSH R1
     PUSH R3
-    MOV R0,Display
-    MOV R1,DISPLAY_END
-CicloLimpar:         ;Ciclo para a limpeza caracter a caracter
-    MOV R2,CaracterVazio
-    MOVB [R0],R2
-    ADD R0,1
-    CMP R0,R1
-    JLE CicloLimpar
+    MOV R0,Display      ; move para R0 o endereco de Diplay
+    MOV R1,DISPLAY_END  ; move para R1 o endereco de Display_end
+CicloLimpar:         ; Ciclo para a limpeza caracter a caracter  
+    MOV R2,CaracterVazio    ; coloca em R2 o valor guardado em CaracterVazio
+    MOVB [R0],R2     ; Move para R2 o byte de R0 
+    ADD R0,1         ; adiciona a R0, 1
+    CMP R0,R1        ; compara r0 com r1 
+    JLE CicloLimpar  ; salta em caso de ser menor ou igual 
     POP R3
     POP R1
     POP R0
