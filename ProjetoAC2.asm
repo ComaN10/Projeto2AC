@@ -63,7 +63,7 @@ PasseInserida EQU 0230H
 ;Palavra Passe
 Place 0030H
 Passe:
-    String "Tr0l@da" 
+    String "@s3mblY" 
 ;Escolhas de Menu (Opcoes)
 Produtos EQU 1              ;Ocao Produtos
 Stock    EQU 2              ;Opcao Stock
@@ -162,7 +162,7 @@ Place 2680H
     String "0.20 Eur      50"
     String "0.10 Eur      50"
     String "1- Seguinte 3/3 "
-    String "----------------"
+    String "7- Voltar       "
 Place 4000H
 MenuErro:
     String "----------------"
@@ -181,7 +181,7 @@ PasseErrada:
     String "   Esta errada  "
     String "Tentar Novamente"
     String "----------------"
-    String "   OK - VOLTAR  "
+    String "   7 - VOLTAR  "
 
 Place 2400H
     MoedasCompra:
@@ -334,6 +334,8 @@ OMostraCiclo3:
     JEQ OMostraCiclo3
     CMP R1,1           ;compara R1 com 1
     JEQ OMostraStock1  ;Caso seja igual sal para a OMostraStock3
+    CMP R1,7
+    JEQ Ostock
     CALL RotinaErro    ;chamada para a rotina de ERRO
     JMP ligado
 ;--------------------
@@ -676,41 +678,41 @@ CicloMoedasTrocos:
 ;Guarda a Qauntidade de vezes que a maquina devolve 2 euros de Troco
     MOV R1,R0               ;
     MOV R4,20               ;
-    MOD R0,R4               ;
+    MOD R0,R4               ;--------------------
     DIV R1,R4               ;repete para 2 euros
-    ADD R1,R2               ;
+    ADD R1,R2               ;--------------------
     MOV R5,MDois            ;
     MOVB [R5],R1            ;
 ;Guarda a Qauntidade de vezes que a maquina devolve 1 euros de Troco
     MOV R1,R0               ;
     MOV R4,10               ;
-    MOD R0,R4               ;
+    MOD R0,R4               ;--------------------
     DIV R1,R4               ;repete para 1 euro
-    ADD R1,R2               ;
+    ADD R1,R2               ;--------------------
     MOV R5,MUm              ;
     MOVB [R5],R1            ;
 ;Guarda a Qauntidade de vezes que a maquina devolve 50 centimos de Troco
     MOV R1,R0               ;
     MOV R4,5                ;
-    MOD R0,R4               ;
+    MOD R0,R4               ;------------------------
     DIV R1,R4               ;repete para 50 centimos
-    ADD R1,R2               ;
+    ADD R1,R2               ;------------------------
     MOV R5,MCinquenta       ;
     MOVB [R5],R1            ;
 ;Guarda a Qauntidade de vezes que a maquina devolve 20 centimos de Troco
     MOV R1,R0               ;
     MOV R4,2                ;
-    MOD R0,R4               ;
+    MOD R0,R4               ;------------------------
     DIV R1,R4               ;repete para 20 centimos
-    ADD R1,R2               ;
+    ADD R1,R2               ;------------------------
     MOV R5,MVinte           ;
     MOVB [R5],R1            ;
 ;Guarda a Qauntidade de vezes que a maquina devolve 10 Centimos de Troco
     MOV R1,R0               ;
     MOV R4,1                ;
-    MOD R0,R4               ;
+    MOD R0,R4               ;------------------------
     DIV R1,R4               ;repete para 10 centimos
-    ADD R1,R2               ;
+    ADD R1,R2               ;------------------------
     MOV R5,MDez             ;
     MOVB [R5],R1            ;
     RET                     
@@ -726,27 +728,27 @@ CicloDiminuiStockMoedas:
     MOV R0,48               ;guarda 48 em r0
     MOV R1,10               ;guarda 10 em r1
 ;Diminui Stock 5 Euros
-    MOV R2,MCinco           ;recebe a posicao onde foi 
-    MOVB R2,[R2]
-    SUB R2,R0
-    MOV R3,SCinco1
-    MOVB R5,[R3]
-    MOV R4,SCinco2
-    MOVB R6,[R4]
-    SUB R5,R0
-    SUB R6,R0
-    MUL R5,R1
-    ADD R5,R6
-    CMP R5,0
-    JEQ jumpSemTroco
-    SUB R5,R2
-    MOV R6,R5
-    MOD R6,R1
-    DIV R5,R1
-    ADD R5,R0
-    ADD R6,R0
-    MOVB [R3],R5
-    MOVB [R4],R6
+    MOV R2,MCinco           ;recebe a posicao onde foi guardado a quantidade de 5 euros como troco
+    MOVB R2,[R2]            ;recebe a quantidade em r2
+    SUB R2,R0               ;converte para decimal
+    MOV R3,SCinco1          ;recebe a posicao das dezenas do stock das notas de 5 euros
+    MOVB R5,[R3]            ;recebe o valor das dezenas
+    MOV R4,SCinco2          ;recebe a posicao das unidades do stock das notas de 5 euros
+    MOVB R6,[R4]            ;recebe o valor das unidades
+    SUB R5,R0               ;converte para decimal
+    SUB R6,R0               ;converte para decimal
+    MUL R5,R1               ;tranforma o valor em dezenas
+    ADD R5,R6               ;soma os dois digitos
+    CMP R5,0                ;verifica se existe stock de moedas de 5 euros
+    JEQ jumpSemTroco        ;caso nao exista salta para a rotina que apresenta dno display um aviso de nao ter stock
+    SUB R5,R2               ;remove a quantidade de notas de 5 euros que foram dadas como troco
+    MOV R6,R5               ;copia r5 para r6
+    MOD R6,R1               ;calcula o quociente da divisao por 10
+    DIV R5,R1               ;calcula o resultado da divisao por 10
+    ADD R5,R0               ;converte para ASCII
+    ADD R6,R0               ;convete para ASCII
+    MOVB [R3],R5            ;guarda o novo valor das dezenas
+    MOVB [R4],R6            ;guarda o novo valor das unidades
 ;Diminui Stock 2 Euros
     MOV R2,MDois
     MOVB R2,[R2]
@@ -755,9 +757,9 @@ CicloDiminuiStockMoedas:
     MOVB R5,[R3]
     MOV R4,SDois2
     MOVB R6,[R4]
-    SUB R5,R0
-    SUB R6,R0
-    MUL R5,R1
+    SUB R5,R0               ;-----------------------------------
+    SUB R6,R0               ;repete para as moedas de dois euros
+    MUL R5,R1               ;-----------------------------------
     ADD R5,R6
     CMP R5,0
     JEQ jumpSemTroco
@@ -773,13 +775,13 @@ CicloDiminuiStockMoedas:
     MOV R2,MUm
     MOVB R2,[R2]
     SUB R2,R0
-    MOV R3,SUm1
+    MOV R3,SUm1             
     MOVB R5,[R3]
     MOV R4,SUm2
     MOVB R6,[R4]
-    SUB R5,R0
-    SUB R6,R0
-    MUL R5,R1
+    SUB R5,R0               ;-----------------------------------
+    SUB R6,R0               ;repete para as moedas de um euro
+    MUL R5,R1               ;-----------------------------------
     ADD R5,R6
     CMP R5,0
     JEQ jumpSemTroco
@@ -792,13 +794,6 @@ CicloDiminuiStockMoedas:
     MOVB [R3],R5
     MOVB [R4],R6
     JMP cont
-;-----------------------------------------------------------------------------------------------------------
-;Jump absoluto Sem Troco
-;--------------------
-jumpSemTroco:  ;visto que a instruçao JEQ tem um limite de 255 instruçoes foi criada uma etiqueta com um JMP
-    JMP SemTroco
-;-----------------------------------------------------------------------------------------------------------
-cont:
 ;Diminui Stock 50 Centimos
     MOV R2,MCinquenta
     MOVB R2,[R2]
@@ -807,12 +802,12 @@ cont:
     MOVB R5,[R3]
     MOV R4,SCinquenta2
     MOVB R6,[R4]
-    SUB R5,R0
+    SUB R5,R0                           
     SUB R6,R0
-    MUL R5,R1
-    ADD R5,R6
-    CMP R5,0
-    JEQ SemTroco
+    MUL R5,R1                   ;--------------------------------------------
+    ADD R5,R6                   ;repete para as moedas de cinquenta centimos
+    CMP R5,0                    ;--------------------------------------------
+    JEQ jumpSemTroco
     SUB R5,R2
     MOV R6,R5
     MOD R6,R1
@@ -828,13 +823,13 @@ cont:
     MOV R3,SVinte1
     MOVB R5,[R3]
     MOV R4,SVinte2
-    MOVB R6,[R4]
-    SUB R5,R0
-    SUB R6,R0
+    MOVB R6,[R4]                ;--------------------------------------------
+    SUB R5,R0                   ;repete para as moedas de vinte centimos
+    SUB R6,R0                   ;--------------------------------------------
     MUL R5,R1
     ADD R5,R6
     CMP R5,0
-    JEQ SemTroco
+    JEQ jumpSemTroco
     SUB R5,R2
     MOV R6,R5
     MOD R6,R1
@@ -843,6 +838,13 @@ cont:
     ADD R6,R0
     MOVB [R3],R5
     MOVB [R4],R6
+;-----------------------------------------------------------------------------------------------------------
+;Jump absoluto Sem Troco
+;--------------------
+jumpSemTroco:  ;visto que a instruçao JEQ tem um limite de 255 instruçoes foi criada uma etiqueta com um JMP
+    JMP SemTroco
+;-----------------------------------------------------------------------------------------------------------
+cont:                         ;foi feito uma rotina para salta a ultimas 3 linhas devido ao limite de instrucoes
 ;Diminui Stock 10 Centimos
     MOV R2,MDez
     MOVB R2,[R2]
@@ -851,9 +853,9 @@ cont:
     MOVB R5,[R3]
     MOV R4,SDez2
     MOVB R6,[R4]
-    SUB R5,R0
-    SUB R6,R0
-    MUL R5,R1
+    SUB R5,R0               ;--------------------------------------------
+    SUB R6,R0               ;repete para as moedas de cinquanta centimos
+    MUL R5,R1               ;--------------------------------------------
     ADD R5,R6
     CMP R5,0
     JEQ SemTroco
@@ -866,41 +868,103 @@ cont:
     MOVB [R3],R5
     MOVB [R4],R6
     RET
+;---------------------------- 
+;Menu Aumenta Moeda Inserida
+;----------------------------
+CicloAumentaMoedas:
+    MOV R0,AumentaMoedas        ;guarda a posicao em que guarda qual foi a moeda inserida pelo utilizador
+    MOVB R0,[R0]                ;guarda o valor
+    MOV R3,48                   ;guarda 48 em r3
+    SUB R0,R3                   ;converte o valor de r0 em decimal
+    CMP R0,1                    ;compara se é 1
+    JEQ A5euros                 ;caso seja vai para o caso de ser inserida uma moeda de 5 euros
+    CMP R0,2                    ;compara se é 2
+    JEQ A2euros                 ;caso seja vai para o caso de ser inserida uma moeda de 2 euros
+    CMP R0,3                    ;compara se é 3
+    JEQ A1euros                 ;caso seja vai para o caso de ser inserida uma moeda de 1 euro
+    CMP R0,4                    ;compara se é 4
+    JEQ A50Cent                 ;caso seja vai para o caso de ser inserida uma moeda de 50 centimos
+    CMP R0,5                    ;compara se é 5
+    JEQ A20Cent                 ;caso seja vai para o caso de ser inserida uma moeda de 20 centimos
+    CMP R0,6                    ;compara se é 6
+    JEQ A10Cent                 ;caso seja vai para o caso de ser inserida uma moeda de 10 centimos
+A5euros:                        ;caso seja inserido 5 euros
+    MOV R1,SCinco1              ;guarda a posicao do stock das dezenas
+    MOV R2,SCinco2              ;guarda a posicao do stock das unidades
+    JMP aumenta                 ;salta para o aumentar
+A2euros:                        ;Caso seja inserido 2 euros 
+    MOV R1,SDois1               ;-------------------------------
+    MOV R2,SDois2               ;repete para as moedas de 2 euros
+    JMP aumenta                 ;--------------------------------
+A1euros:                        ;Caso seja inserido 1 euro
+    MOV R1,SUm1                 ;--------------------------------
+    MOV R2,SUm2                 ;repete para as moedas de 1 euro
+    JMP aumenta                 ;--------------------------------
+A50Cent:                        ;Caso seja inserido 50 centimos
+    MOV R1,SCinquenta1          ;------------------------------------
+    MOV R2,SCinquenta2          ;repete para as moedas de 50 centimos
+    JMP aumenta                 ;------------------------------------
+A20Cent:                        ;Caso seja inserido 20 centimos
+    MOV R1,SVinte1              ;------------------------------------
+    MOV R2,SVinte2              ;repete para as moedas de 20 centimos
+    JMP aumenta                 ;------------------------------------
+A10Cent:                        ;Caso seja inserido 10 centimos
+    MOV R1,SDez1                ;------------------------------------
+    MOV R2,SDez2                ;repete para as moedas de 10 centimos
+    JMP aumenta                 ;------------------------------------
+aumenta:                        ;
+    MOV R4,10                   ;guarda o valor 10 em r4
+    MOV R5,1                    ;guarda o valor 1 em r5
+    MOVB R6,[R1]                ;recebe o valor das dezenas do stock
+    MOVB R7,[R2]                ;recebe o valor das unidades do stock
+    SUB R6,R3                   ;cenverte para decimal
+    SUB R7,R3                   ;converte para decimal
+    MUL R6,R4                   ;mete o valor em dezenas
+    ADD R6,R7                   ;soma os dois digitos
+    ADD R6,R5                   ;aumenta o valor do stock em 1
+    MOV R7,R6                   ;copia o r6 para r7
+    MOD R7,R4                   ;guarda o resto da divisao por 10 em r7
+    DIV R6,R4                   ;guarda o valor da divisao por 10 em r6
+    ADD R6,R3                   ;converte para ASCII
+    ADD R7,R3                   ;converte para ASCII
+    MOVB [R1],R6                ;guarda o novo valor das dezenas do stock da moeda
+    MOVB [R2],R7                ;guarda o novo valor das unidades do stock da moeda
+    RET   
 ;-------------------- 
 ;Menu TALAO
 ;-------------------- 
 OTalao:
-    CALL CicloEscolhaMoedas
-    CALL CicloTroco
-    CALL CicloDiminuiStockProd
-    CALL CicloMoedasTrocos
-    CALL CicloAumentaMoedas
-    CALL CicloDiminuiStockMoedas
-    MOV R2,Talao
-    CALL MostraDisplay
-    CALL LimpaPerif
-    MOV R0,Nr_Menu
-    JMP FimTalao
+    CALL CicloEscolhaMoedas             ;chama o ciclo com as escolhas de moedas
+    CALL CicloTroco                     ;chama o ciclo para calcular o troco
+    CALL CicloDiminuiStockProd          ;chama o ciclo para diminuir o stock
+    CALL CicloMoedasTrocos              ;chama o ciclo para calcular quantas vezes cada moeda foi utilizada para troco
+    CALL CicloAumentaMoedas             ;ciclo que aumenta no stock a moeda inserida pelo utilizador
+    CALL CicloDiminuiStockMoedas        ;ciclo que diminui a moedas do stock utilizadas no troco
+    MOV R2,Talao                        ;guarda em r2 o display para o talao
+    CALL MostraDisplay                  ;mostra o display
+    CALL LimpaPerif                     ;limpa os perifericos
+    MOV R0,Nr_Menu                      ;guarda a posicao do periferico de entrada
+    JMP FimTalao                        ;salta para o fim do talao
 SemTroco:
-    MOV R2,ErroTroco
-    CALL MostraDisplay
-    CALL LimpaPerif
-    MOV R0,Nr_Menu
-    JMP FimTalao
+    MOV R2,ErroTroco                    ;Guarda em r2 o display caso nao exista troco no stock
+    CALL MostraDisplay                  ;mostra o display
+    CALL LimpaPerif                     ;limpa os perifeicos
+    MOV R0,Nr_Menu                      ;guarda a posicao do periferico de entrada
+    JMP FimTalao                        ;salta para o fim do talao
 SemStock:
-    MOV R2,ErroStock
-    CALL MostraDisplay
-    CALL LimpaPerif
-    MOV R0,Nr_Menu
-    JMP FimTalao
+    MOV R2,ErroStock                    ;Guarda em r2 o display caso nao exista produto no stock
+    CALL MostraDisplay                  ;mostra o display
+    CALL LimpaPerif                     ;limpa os perifeicos
+    MOV R0,Nr_Menu                      ;guarda a posicao do periferico de entrada
+    JMP FimTalao                        ;salta para o fim do talao
 FimTalao:
-    MOVB R1,[R0]
-    CMP R1,0
-    JEQ FimTalao
-    CMP R1,7
-    JEQ jumpLigado2
-    CALL RotinaErro
-    JMP jumpLigado2
+    MOVB R1,[R0]                        ;guarda o valor que o utilizador introduziod
+    CMP R1,0                            ;caso seja 0 volta ao fim do talao para voltar a ler o valor 
+    JEQ FimTalao                        ;salta para o fim do talao
+    CMP R1,7                            ;caso seja 7 o valor introduzido pelo utilizador
+    JEQ jumpLigado2                     ;salta para o menu principal
+    CALL RotinaErro                     ;caso seja outro valor apresenta sinal de erro 
+    JMP jumpLigado2                     ;salta para a rotina ligado
 ;--------------------
 ;Jump absoluto
 ;--------------------
@@ -955,6 +1019,8 @@ CicloPasseErrada:
     MOVB R1,[R0]    ; passa para R1 o byte presente em R0
     CMP R1,0        ; compara com 0 
     JEQ CicloPasseErrada    ; caso seja igual salta para CicloPasseErrada
+    CMP R1,7        ; compara R1 com 7  
+    JEQ jumpLigado2   ; caso seja igual volta para o menu stock
     JMP CicloFinal          ; salta para os Pops
 PasseIgual:
     ADD R0,2        ; adiciona a R0 ,2 
@@ -973,68 +1039,7 @@ CicloFinal:
     POP R1
     POP R0
     RET
-;---------------------------- 
-;Menu Aumenta Moeda Inserida
-;----------------------------
-CicloAumentaMoedas:
-    MOV R0,AumentaMoedas
-    MOVB R0,[R0]
-    MOV R3,48
-    SUB R0,R3
-    CMP R0,1
-    JEQ A5euros
-    CMP R0,2
-    JEQ A2euros
-    CMP R0,3
-    JEQ A1euros
-    CMP R0,4
-    JEQ A50Cent
-    CMP R0,5
-    JEQ A20Cent
-    CMP R0,6
-    JEQ A10Cent
-A5euros:
-    MOV R1,SCinco1
-    MOV R2,SCinco2
-    JMP aumenta
-A2euros:
-    MOV R1,SDois1
-    MOV R2,SDois2
-    JMP aumenta
-A1euros:
-    MOV R1,SUm1
-    MOV R2,SUm2
-    JMP aumenta
-A50Cent:
-    MOV R1,SCinquenta1
-    MOV R2,SCinquenta2
-    JMP aumenta
-A20Cent:
-    MOV R1,SVinte1
-    MOV R2,SVinte2
-    JMP aumenta
-A10Cent:
-    MOV R1,SDez1
-    MOV R2,SDez2
-    JMP aumenta
-aumenta:
-    MOV R4,10
-    MOV R5,1
-    MOVB R6,[R1]
-    MOVB R7,[R2]
-    SUB R6,R3
-    SUB R7,R3
-    MUL R6,R4
-    ADD R6,R7
-    ADD R6,R5
-    MOV R7,R6
-    MOD R7,R4
-    DIV R6,R4
-    ADD R6,R3
-    ADD R7,R3
-    MOVB [R1],R6
-    MOVB [R2],R7
-    RET
+                      
 ;--------------------
 ;Rotina Erro
 ;--------------------  
