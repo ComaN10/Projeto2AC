@@ -170,9 +170,12 @@ Place 2680H
     String "----------------"
 Place 2500H
 MenuErro:
+    String "----------------"
     String "     Atencao    "
     String "      Opcao     "   
     String "     Errada     "
+    String "----------------"
+    String "   7 - VOLTAR   "
     String "----------------"
 
 Place 2180H         ;Display infroma passe Errada
@@ -196,13 +199,13 @@ Place 2400H
 
 Place 2500H
     Talao:
-    String "----------------"
     String "-----TALAO------"
     String "----------------"
     String "           .00--"
     String "Inserido   .00--"
     String "Troco      . 0--"
     String "----------------"
+    String "   7 - VOLTAR  "
 
 Place 0000H
 Inicio:
@@ -327,37 +330,37 @@ OMostraCiclo3:
 ;Menu Bebidas
 ;--------------------
 OBebidas:
-    MOV R2,MenuBebidadas
-    CALL MostraDisplay
-    CALL LimpaPerif
-    MOV R0,Nr_Menu
-    MOV R3,48
-    MOV R4,1
-    MOV R5, ReduzStock
+    MOV R2,MenuBebidadas ; coloca em R2 o endereço de memoria do display
+    CALL MostraDisplay   ; chamada a funcao para que o display seja mostrado
+    CALL LimpaPerif      ; chamada a funcao limpa perifericos
+    MOV R0,Nr_Menu       ; coloca em R0 o valor escolhido pelo utilizador 
+    MOV R3,48            ; coloca em R3 o valor 48
+    MOV R4,1             ; coloca em R4 o valor 1
+    MOV R5, ReduzStock   ; guarda a posicao de ReduzStock em R5
 OBebidasCiclo:
-    MOVB R1,[R0]
-    CMP R1,0
-    JEQ OBebidasCiclo
-    ADD R3,R4
-    MOVB [R5],R3
-    CMP R1,COCA
-    JEQ Omoedas
-    ADD R3,R4
-    MOVB [R5],R3
-    CMP R1,Brisa
-    JEQ Omoedas
-    ADD R3,R4
-    MOVB [R5],R3
-    CMP R1,Fanta
-    JEQ Omoedas
-    ADD R3,R4
-    MOVB [R5],R3
-    CMP R1,Agua
-    JEQ Omoedas
-    CMP R1,7
-    JEQ ligado
-    CALL RotinaErro
-    JMP OBebidas
+    MOVB R1,[R0]         ; Move um bit de R0 para R1 
+    CMP R1,0             ; faz a comparacao de r1 com 0
+    JEQ OBebidasCiclo    ; caso seja igual volta ao inicio do ciclo
+    ADD R3,R4            ; Adiciona r3 com R4
+    MOVB [R5],R3         ; escreve o carater no diplay
+    CMP R1,COCA          ; compara o valor de R1 com o valor guardado na variavel COCA
+    JEQ Omoedas          ; caso seja igual salta para o display das moedas
+    ADD R3,R4            ; adiciona R3 com R4
+    MOVB [R5],R3         ; escreve o carater no display
+    CMP R1,Brisa         ; compara o valor de R1 com o valor guardado na variavel Brisa
+    JEQ Omoedas          ; caso seja igual salta para o display das moedas
+    ADD R3,R4            ; adiciona R3 com R4
+    MOVB [R5],R3         ; escreve o carater no display
+    CMP R1,Fanta         ; compara o valor de R1 com o valor guardado na variavel Fanta
+    JEQ Omoedas          ; caso seja igual salta para o display das moedas
+    ADD R3,R4            ; adiciona R3 com R4
+    MOVB [R5],R3         ; escreve o carater no display
+    CMP R1,Agua          ; compara o valor de R1 com o valor guardado na variavel Agua
+    JEQ Omoedas          ; caso seja igual salta para o display das moedas
+    CMP R1,7             ; compara o valor do R1  com o valor 7 que nos diz para retornar para o display inicial
+    JEQ ligado           
+    CALL RotinaErro      ; caso nao seja nenhuma das opçoes salta para a rotina de ERRO 
+    JMP OBebidas         ; Salta para o inicio da rotina
 ;--------------------
 ;Menu Snacks
 ;--------------------  
@@ -896,11 +899,11 @@ RotinaErro:
     MOV R2,MenuErro
     CALL MostraDisplay
     CALL LimpaPerif
-    MOV R0,OK
+    MOV R0,Nr_Menu
 ERRO:
     MOVB R1,[R0]
-    CMP R1,1
-    JNE ERRO
+    CMP R1,7
+    JEQ ligado
     POP R2
     POP R1
     POP R0
