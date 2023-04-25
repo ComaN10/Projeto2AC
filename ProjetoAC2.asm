@@ -24,6 +24,26 @@ Troco3      EQU 255DH   ;Posicao do digito das unidades dos centimos do troco
 
 ReduzStock  EQU 2710H   ;Posicao do produto escolhido para reduzir no stock
 
+MCinco      EQU 2730H   ;Posicao para guardar o troco de cinco euros 
+MDois       EQU 2740H   ;Posicao para guardar o troco de dois euros 
+MUm         EQU 2750H   ;Posicao para guardar o troco de um euro 
+MCinquenta  EQU 2760H   ;Posicao para guardar o troco de cinquenta centimos 
+MVinte      EQU 2770H   ;Posicao para guardar o troco de venti centimos 
+MDez        EQU 2780H   ;Posicao para guardar o troco de dez centimos 
+
+SCinco1     EQU 264EH
+SCinco2     EQU 264FH
+SDois1      EQU 265EH
+SDois2      EQU 265FH
+SUm1        EQU 269EH
+SUm2        EQU 269FH
+SCinquenta1 EQU 26AEH
+SCinquenta2 EQU 26AFH
+SVinte1     EQU 26BEH
+SVinte2     EQU 26BFH
+SDez1       EQU 26CEH
+SDez2       EQU 26CFH
+
 ;PLACE 02A0H
 ;Passe:
 ;String "   -passe-   " ;Mostra Password
@@ -522,10 +542,10 @@ DinheiroInsuf:
     MOVB [R9],R2            ;Escreve o char "N" na posicao de R9
     MOVB [R0],R3            ;Escreve o char "S" na posicao de R0
     RET
-;--------------------
-;Menu DiminuiStock
-;--------------------
-CicloDiminuiStock:
+;----------------------
+;Menu DiminuiStockProd
+;----------------------
+CicloDiminuiStockProd:
     MOV R0,ReduzStock       ;Guarda a posicao de ReduzStock em R0
     MOVB R0,[R0]            ;Guarda o valor de Reduzstock em R0
     MOV R3,48               ;Guarda o valor de conversao em R3
@@ -597,14 +617,205 @@ Diminui:
     MOVB [R1],R6            ;Coloca o novo valor das dezenas
     MOVB [R2],R7            ;Coloca o novo valor das unidades
     RET
-
+;--------------------
+;Menu MoedasTroco
+;--------------------
+CicloMoedasTrocos:
+    MOV R0, Troco1
+    MOV R1, Troco2
+    MOVB R0,[R0]
+    MOVB R1,[R1]
+    MOV R2,48
+    MOV R3,10
+    SUB R0,R2
+    SUB R1,R2
+    MUL R0,R3
+    ADD R0,R1
+;Guarda a Qauntidade de vezes que a maquina devolve 5 euros de Troco
+    MOV R1,R0
+    MOV R4,50
+    MOD R0,R4
+    DIV R1,R4
+    ADD R1,R2
+    MOV R5,MCinco
+    MOVB [R5],R1
+;Guarda a Qauntidade de vezes que a maquina devolve 2 euros de Troco
+    MOV R1,R0
+    MOV R4,20
+    MOD R0,R4
+    DIV R1,R4
+    ADD R1,R2
+    MOV R5,MDois
+    MOVB [R5],R1
+;Guarda a Qauntidade de vezes que a maquina devolve 1 euros de Troco
+    MOV R1,R0
+    MOV R4,10
+    MOD R0,R4
+    DIV R1,R4
+    ADD R1,R2
+    MOV R5,MUm
+    MOVB [R5],R1
+;Guarda a Qauntidade de vezes que a maquina devolve 50 centimos de Troco
+    MOV R1,R0
+    MOV R4,5
+    MOD R0,R4
+    DIV R1,R4
+    ADD R1,R2
+    MOV R5,MCinquenta
+    MOVB [R5],R1
+;Guarda a Qauntidade de vezes que a maquina devolve 20 centimos de Troco
+    MOV R1,R0
+    MOV R4,2
+    MOD R0,R4
+    DIV R1,R4
+    ADD R1,R2
+    MOV R5,MVinte
+    MOVB [R5],R1
+;Guarda a Qauntidade de vezes que a maquina devolve 10 Centimos de Troco
+    MOV R1,R0
+    MOV R4,1
+    MOD R0,R4
+    DIV R1,R4
+    ADD R1,R2
+    MOV R5,MDez
+    MOVB [R5],R1
+    RET
+;------------------------
+;Menu DiminuiStockMoedas
+;------------------------
+CicloDiminuiStockMoedas:
+    MOV R0,48
+    MOV R1,10
+;Diminui Stock 5 Euros
+    MOV R2,MCinco
+    MOVB R2,[R2]
+    SUB R2,R0
+    MOV R3,SCinco1
+    MOVB R5,[R3]
+    MOV R4,SCinco2
+    MOVB R6,[R4]
+    SUB R5,R0
+    SUB R6,R0
+    MUL R5,R1
+    ADD R5,R6
+    SUB R5,R2
+    MOV R6,R5
+    MOD R6,R1
+    DIV R5,R1
+    ADD R5,R0
+    ADD R6,R0
+    MOVB [R3],R5
+    MOVB [R4],R6
+;Diminui Stock 2 Euros
+    MOV R2,MDois
+    MOVB R2,[R2]
+    SUB R2,R0
+    MOV R3,SDois1
+    MOVB R5,[R3]
+    MOV R4,SDois2
+    MOVB R6,[R4]
+    SUB R5,R0
+    SUB R6,R0
+    MUL R5,R1
+    ADD R5,R6
+    SUB R5,R2
+    MOV R6,R5
+    MOD R6,R1
+    DIV R5,R1
+    ADD R5,R0
+    ADD R6,R0
+    MOVB [R3],R5
+    MOVB [R4],R6
+;Diminui Stock 1 Euro
+    MOV R2,MUm
+    MOVB R2,[R2]
+    SUB R2,R0
+    MOV R3,SUm1
+    MOVB R5,[R3]
+    MOV R4,SUm2
+    MOVB R6,[R4]
+    SUB R5,R0
+    SUB R6,R0
+    MUL R5,R1
+    ADD R5,R6
+    SUB R5,R2
+    MOV R6,R5
+    MOD R6,R1
+    DIV R5,R1
+    ADD R5,R0
+    ADD R6,R0
+    MOVB [R3],R5
+    MOVB [R4],R6
+;Diminui Stock 50 Centimos
+    MOV R2,MCinquenta
+    MOVB R2,[R2]
+    SUB R2,R0
+    MOV R3,SCinquenta1
+    MOVB R5,[R3]
+    MOV R4,SCinquenta2
+    MOVB R6,[R4]
+    SUB R5,R0
+    SUB R6,R0
+    MUL R5,R1
+    ADD R5,R6
+    SUB R5,R2
+    MOV R6,R5
+    MOD R6,R1
+    DIV R5,R1
+    ADD R5,R0
+    ADD R6,R0
+    MOVB [R3],R5
+    MOVB [R4],R6
+;Diminui Stock 20 Centimos
+    MOV R2,MVinte
+    MOVB R2,[R2]
+    SUB R2,R0
+    MOV R3,SVinte1
+    MOVB R5,[R3]
+    MOV R4,SVinte2
+    MOVB R6,[R4]
+    SUB R5,R0
+    SUB R6,R0
+    MUL R5,R1
+    ADD R5,R6
+    SUB R5,R2
+    MOV R6,R5
+    MOD R6,R1
+    DIV R5,R1
+    ADD R5,R0
+    ADD R6,R0
+    MOVB [R3],R5
+    MOVB [R4],R6
+;Diminui Stock 10 Centimos
+    MOV R2,MDez
+    MOVB R2,[R2]
+    SUB R2,R0
+    MOV R3,SDez1
+    MOVB R5,[R3]
+    MOV R4,SDez2
+    MOVB R6,[R4]
+    SUB R5,R0
+    SUB R6,R0
+    MUL R5,R1
+    ADD R5,R6
+    SUB R5,R2
+    MOV R6,R5
+    MOD R6,R1
+    DIV R5,R1
+    ADD R5,R0
+    ADD R6,R0
+    MOVB [R3],R5
+    MOVB [R4],R6
+    RET
 ;--------------------
 ;Menu TALAO
 ;-------------------- 
 OTalao:
     CALL CicloEscolhaMoedas
     CALL CicloTroco
-    CALL CicloDiminuiStock
+    CALL CicloDiminuiStockProd
+    CALL CicloMoedasTrocos
+    CALL CicloDiminuiStockMoedas
     MOV R2,Talao
     CALL MostraDisplay
     CALL LimpaPerif
